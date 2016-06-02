@@ -55,32 +55,3 @@ void draw()
   rect(100, mPosition, 300, 10 );
 }
 
-
-/*
- if (mVal != mValPrev)
- {
- //myPort.write((int)mVal); 
- //myPort.write((int)50);
- mByte[0] = mVal;
- mByte[1] = 0;
- 
- for (int i = 0; i < 2; i++)
- {    
- myPort.write((int)mByte[i]);
- }  
- 
- 
- print("| Tx" + 0 + "__"+mByte[0]);
- print("| Tx" + 1 + "__"+mByte[1]);
- 
- for (int i = 0; i < 2; i++)
- {    
- mByteRead[i] = myPort.read();
- }      
- 
- print(" | Rx" + 0 + "__"+ (int)mByteRead[0] );
- print(" | Rx" + 1 + "__"+ (int)mByteRead[1] );
- println("");
- mValPrev = mVal;
- }
- */
