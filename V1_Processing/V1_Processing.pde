@@ -1,6 +1,10 @@
 /* Name: Alfrancis Guerrero 
  * Date: 6/2/2016 
  * Notes: Processing file run w/Arduino and Bluetooth Module device. 
+ *        1. Connect your computer to the bluetooth device first. 
+ *        2. Change the "myPort" to the one stated on your laptop.
+ *        3. 
+ *        
  */
 
 import processing.serial.*;
@@ -23,7 +27,7 @@ void setup()
   time         = 0.0; 
   prevtime     = 0.0;
 
-  myPort = new Serial(this, "/dev/cu.HC-06-DevB", 9600);
+  myPort = new Serial(this, "/dev/cu.HC-06-DevB", 9600); // Change "/dev/cu.HC-06-DevB" to the port from your laptop!!
 
   mLogger = createWriter("DataOutput.csv");
   mLogger.println("Time" + "," + "Distance (m)" + "," + "");
