@@ -2,6 +2,7 @@
 #define TRIGPIN 12                           // Pin to send trigger pulse
 #include "pitches.h"
 // notes in the melody:
+#include <NewPing.h>
 
 int finalMelody = NOTE_C4;
 // note durations: 4 = quarter note, 8 = eighth note, etc.:
@@ -29,7 +30,7 @@ void loop() {
   distanceIn = distance / 74 / 2;
 
   //duration of note
-  int noteDuration = 100 / distance;
+  int noteDuration = 1000 / distance;
   tone(8, finalMelody, noteDuration);
 
   // to distinguish the notes, set a minimum time between them.

@@ -1,6 +1,10 @@
 /* Name: Alfrancis Guerrero 
  * Date: 6/2/2016 
  * Notes: Processing file run w/Arduino and Bluetooth Module device. 
+ *        1. Connect your computer to the bluetooth device first. 
+ *        2. Change the "myPort" to the one stated on your laptop.
+ *        3. 
+ *        
  */
 
 import processing.serial.*;
@@ -15,6 +19,7 @@ float mPositionAfter;
 
 float time; 
 float prevtime; 
+
 void setup()
 {  
   mPosition      = 0;
@@ -22,23 +27,23 @@ void setup()
   time         = 0.0; 
   prevtime     = 0.0;
 
-  myPort = new Serial(this, "/dev/cu.HC-06-DevB", 9600);
-  
+  myPort = new Serial(this, "/dev/cu.HC-06-DevB", 9600); // Change "/dev/cu.HC-06-DevB" to the port from your laptop!!
+
   mLogger = createWriter("DataOutput.csv");
   mLogger.println("Time" + "," + "Distance (m)" + "," + "");
-  
-  size(500, 500);
+  println("Initialized.");
+  size(800, 800, P3D);
 }
 
 void draw()
 {
+
   time = millis();
-  background(0);
-  fill(255);
+  background(255);
+  fill(0);
 
   while (myPort.available() > 2) 
   {
-
     for (int i = 0; i < 2; i++) 
     {
       mDataRead[i] = myPort.read();
@@ -47,11 +52,24 @@ void draw()
 
     println("Data Read: " + mDataRead[0] + " " + mDataRead[1] );
   }
+
   mPosition = (int)mDataRead[0];
+
   //mPosition = map(mPosition);
 
-  ellipse(width/2, height - height/2.5, 50, 50);
+  //point(width/2, mPosition);
 
+  ellipse(width/2, height/2, 25, 25);
 
-  rect(100, mPosition, 300, 10 );
+ /* pushMatrix();
+  for (float i = 0.0; i < 3.14 * 2; i++)
+  {
+    rotateZ(i);
+  }
+  translate(0, mPosition);
+  rect(width/2, height/2, 100, 100);
+  popMatrix();*/
+  rect(width/2, height/2 + mPosition, 100, 100);
+
+  
 }
