@@ -12,6 +12,7 @@
 
 
 #define TRIGGER_PIN 12
+#define MOTOR_PIN 9
 #define ECHO_PIN 11
 #define MAX_DISTANCE 400
 
@@ -52,6 +53,7 @@ void setup() {
 #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
   Fastwire::setup(400, true);
 #endif
+  pinMode(MOTOR_PIN, OUTPUT);
 
   Serial.begin(9600);
   mySerial.begin(9600);
@@ -85,8 +87,8 @@ void loop() {
   mDistance = sonar.ping_cm();
   mValue = map(mDistance, 400, 0 , 255, 0);
   mValue = constrain(mValue , 0, 255);
-  
-  
+
+
 
   xR = euler[0] * 180 / M_PI; yR = euler[1] * 180 / M_PI; zR = euler[2] * 180 / M_PI;
 
@@ -108,9 +110,14 @@ void loop() {
 
     accelgyro.getFIFOBytes(fifoBuffer, packetSize);
     fifoCount -= packetSize;
+
     Serial.write((int)xR);
     Serial.write((int)mValue);
     delay(100);
+    digitalWrite(MOTOR_PIN, HIGH);
+    delay(mValue);
+    digitalWrite(MOTOR_PIN, LOW);
+    delay(mValue);
 
   }
 
