@@ -1,8 +1,24 @@
+/*
+  V2
+*/
+
+#include <NewPing.h>
+#include <SoftwareSerial.h>
 #include "I2Cdev.h"
 #include "MPU6050_6Axis_MotionApps20.h"
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
 #include "Wire.h"
 #endif
+
+
+#define TRIGGER_PIN 12
+#define ECHO_PIN 11
+#define MAX_DISTANCE 400
+
+SoftwareSerial mySerial(0, 1);
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
 
 // MPU control/status vars
 bool dmpReady = false;  // set true if DMP init was successful
@@ -16,6 +32,11 @@ Quaternion q;           // [w, x, y, z]         quaternion container
 float xR;
 float yR;
 float zR;
+
+int mDistance;
+int mValue;
+
+
 volatile bool mpuInterrupt = false;     // indicates whether MPU interrupt pin has gone high
 void dmpDataReady() {
   mpuInterrupt = true;
@@ -25,7 +46,7 @@ MPU6050 accelgyro;
 int16_t gx, gy, gz;
 
 void setup() {
-  
+
 #if I2CDEV_IMPLEMENTATION == I2CDEV_ARDUINO_WIRE
   Wire.begin();
 #elif I2CDEV_IMPLEMENTATION == I2CDEV_BUILTIN_FASTWIRE
@@ -33,6 +54,7 @@ void setup() {
 #endif
 
   Serial.begin(9600);
+  mySerial.begin(9600);
   accelgyro.initialize();
   devStatus = accelgyro.dmpInitialize();
 
@@ -51,9 +73,21 @@ void setup() {
 }
 
 void loop() {
-  
+
   if (!dmpReady) return;
+  while (!mpuInterrupt && fifoCount < packetSize) {
+    //mySerial.listen();
+
+  }
+
+  // Distance Mapping
+  delay(50);
+  mDistance = sonar.ping_cm();
+  mValue = map(mDistance, 400, 0 , 255, 0);
+  mValue = constrain(mValue , 0, 255);
   
+  
+
   xR = euler[0] * 180 / M_PI; yR = euler[1] * 180 / M_PI; zR = euler[2] * 180 / M_PI;
 
   xR = map(xR, -180, 180, 0, 255); yR = map(yR, -180, 180, 0, 255); zR = map(zR, -180, 180, 0, 255);
@@ -61,24 +95,23 @@ void loop() {
   mpuInterrupt = false;
   mpuIntStatus = accelgyro.getIntStatus();
   fifoCount = accelgyro.getFIFOCount();
-  
+
   accelgyro.dmpGetQuaternion(&q, fifoBuffer);
   accelgyro.dmpGetEuler(euler, &q);
-  
-  if ((mpuIntStatus & 0x10) || fifoCount == 1024) accelgyro.resetFIFO();
-  
+
+  if ((mpuIntStatus & 0x10) || fifoCount == 1024) {
+    accelgyro.resetFIFO();
+  }
+
   else if (mpuIntStatus & 0x02) {
     while (fifoCount < packetSize) fifoCount = accelgyro.getFIFOCount();
-   
+
     accelgyro.getFIFOBytes(fifoBuffer, packetSize);
     fifoCount -= packetSize;
-
-    // Serial.print("euler\t");
     Serial.write((int)xR);
-    delay(10);
-    //Serial.print("\t");
-    //Serial.print(yR);
-    //Serial.print("\t");
-    //Serial.println(zR);
+    Serial.write((int)mValue);
+    delay(100);
+
   }
+
 }
