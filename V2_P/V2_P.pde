@@ -9,7 +9,7 @@ float valPrev = 0.00;
 float valInter = 0.00; 
 float deg;
 float dist;
-
+float dist_1;
 void setup() {
   size(800, 800);
 
@@ -22,23 +22,27 @@ void setup() {
 
 void draw() {
 
+  // Port Reading
   if (myPort.available() > 1)
   {
     for (int i = 0; i < 2; i++) {
       valNum[i] = myPort.read();
     }
   }
+  
+  // Rotations
   deg = valNum[0];
   deg = map(deg, 0, 255, -3.14, 3.14); 
-  dist = valNum[1];
-  dist = map(valNum[1], 0, 255, 0, 1000);
   valInter = interpolate(valInter, deg, 0.25);
-  
-  
-  
-  println(degrees(deg), "|", int(dist));
 
+  // Distances
+  dist = map(valNum[1], 0, 255, 0, 1000);
+  if (dist > 0) dist_1 = interpolate(dist_1, dist, 0.25);
   
+  // Print Degrees and Distance
+  println(degrees(deg), "|", int(dist));
+  
+  // User Interface
   background(0);
   fill(0);
   stroke(0, 255, 255);
@@ -48,10 +52,11 @@ void draw() {
   pushMatrix();  
   strokeWeight(20);
   segment(x, y, valInter);   
-  arc(dist, 0, 10, 100, -PI/2, PI/2);
+  arc(dist_1, 0, 10, 100, -PI/2, PI/2);
   popMatrix();
 }
 
+// Drawing Line
 void segment(float x, float y, float a) {
   translate(x, y);
   rotate(a);
