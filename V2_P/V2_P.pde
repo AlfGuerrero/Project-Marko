@@ -18,6 +18,7 @@ void setup() {
 
   myPort = new Serial(this, "/dev/cu.usbserial-DA01MCB5", 9600);
   // myPort = new Serial(this, "/dev/cu.HC-06-DevB", 9600);
+  //Travis test change
 }
 
 void draw() {
